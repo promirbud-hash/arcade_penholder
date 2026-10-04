@@ -1,72 +1,71 @@
 # Arcade Penholder
 
-Firmware przenośnej konsoli arcade zbudowanej na ESP32-S3. Projekt łączy
-launcher, gry zręcznościowe i proste aplikacje na ekranie TFT ST7789
-240 × 320 px.
+Firmware for a portable arcade console built around an ESP32-S3. The project
+brings together a launcher, arcade games, and simple applications on a
+240 × 320 px ST7789 TFT display.
 
-## Zawartość
+## What's included
 
-**Gry:** Doom, Bag-Man, Snake, Tetris, Yellow Racer i Arkanoid.
+**Games:** Doom, Bag-Man, Snake, Tetris, Yellow Racer, and Arkanoid.
 
-**Aplikacje:** Tamagotchi z treningiem i sklepem, timer Pomodoro oraz ekran
-odczytów temperatury i wilgotności z czujnika DHT22.
+**Applications:** Tamagotchi with training and a shop, a Pomodoro timer, and a
+readout screen for temperature and humidity from a DHT22 sensor.
 
-Interfejs i gry (poza Doomem) obsługują język polski i angielski. Ustawienia
-języka, globalnego wyciszenia i poziomu głośności są zapisywane w pamięci NVS.
-Rekordy gier i dane aplikacji również są przechowywane lokalnie. Podświetleniem
-TFT nie można sterować programowo przy obecnym pinoucie, ponieważ nie
-przypisano do niego pinu GPIO.
+The interface, games, and applications support Polish and English; Doom is
+not translated. Language, global mute, and volume settings are saved in NVS.
+Game high scores and application data are also stored locally. TFT backlight
+brightness cannot be controlled with the current pinout because no GPIO is
+assigned to the backlight.
 
-## Sprzęt i pinout
+## Hardware and pinout
 
-Projekt jest skonfigurowany dla ESP32-S3 N16R8 (16 MB Flash i 8 MB PSRAM).
-Wymaga wykrywania PSRAM przez firmware.
+The project is configured for an ESP32-S3 N16R8 (16 MB Flash and 8 MB PSRAM).
+The firmware requires PSRAM to be detected at startup.
 
-| Element | Sygnał | GPIO |
+| Component | Signal | GPIO |
 | --- | --- | ---: |
-| TFT ST7789 | CS | 14 |
+| ST7789 TFT | CS | 14 |
 |  | DC | 13 |
 |  | RST | 12 |
 |  | MOSI | 11 |
 |  | CLK | 10 |
-|  | MISO | nieużywany |
-| Joystick | góra / dół | 17 / 18 |
-|  | lewo / prawo | 3 / 8 |
-|  | przycisk | 16 |
-| Przyciski | A / B / X / Z | 15 / 7 / 6 / 5 |
-| Audio | wyjście dźwięku | 4 |
-| Czujnik DHT22 | DATA | 9 |
+|  | MISO | unused |
+| Joystick | up / down | 17 / 18 |
+|  | left / right | 3 / 8 |
+|  | button | 16 |
+| Buttons | A / B / X / Z | 15 / 7 / 6 / 5 |
+| Audio | sound output | 4 |
+| DHT22 sensor | DATA | 9 |
 
-Wejścia joysticka i przycisków są aktywne stanem niskim i używają
-wewnętrznych rezystorów podciągających. W menu głównym i menu gier przycisk B
-otwiera ustawienia.
+Joystick and button inputs are active-low and use internal pull-up resistors.
+Press B in the main or games menu to open Settings.
 
-## Budowanie i wgrywanie
+## Build and upload
 
-Zainstaluj PlatformIO Core i uruchom polecenia w katalogu repozytorium:
+Install PlatformIO Core and run these commands from the repository directory:
 
 ```powershell
 py -m platformio run -e esp32-s3-devkitc-1-n16r8
 py -m platformio run -e esp32-s3-devkitc-1-n16r8 -t upload
 ```
 
-Firmware używa LittleFS do plików Dooma. Po dodaniu lub zmianie plików w `data`
-zbuduj i wgraj obraz systemu plików:
+The firmware uses LittleFS for Doom files. After adding or changing files in
+`data`, build and upload the filesystem image:
 
 ```powershell
 py -m platformio run -e esp32-s3-devkitc-1-n16r8 -t buildfs
 py -m platformio run -e esp32-s3-devkitc-1-n16r8 -t uploadfs
 ```
 
-`data/doom1.wad` nie jest dołączany do repozytorium. Aby uruchomić Dooma,
-pozyskaj zgodny plik WAD legalnie, umieść go jako `data/doom1.wad`, a następnie
-zbuduj i wgraj LittleFS. Nie commituj pliku WAD.
+`data/doom1.wad` is not included in this repository. To play Doom, obtain a
+compatible WAD file legally, place it at `data/doom1.wad`, then build and
+upload LittleFS. Do not commit the WAD file.
 
-## Dokumentacja i licencje
+## Documentation and licenses
 
-Szczegółowe informacje o konfiguracji, audio, sterowaniu i systemie plików
-znajdują się w [DOOM_SETUP.md](./DOOM_SETUP.md). Kod silnika DoomGeneric jest
-dostarczony w `src/doomgeneric`; jego licencja GPL-2.0 znajduje się w
-`src/doomgeneric/LICENSE`. Adaptacja Yellow Racer zawiera informację o licencji
-MIT w `LICENSE-Yellow-Racer.txt`. Sprawdź licencje poszczególnych komponentów
-przed ich dalszą dystrybucją.
+See [DOOM_SETUP.md](./DOOM_SETUP.md) for detailed setup, audio, controls, and
+filesystem information. The DoomGeneric engine source is included in
+`src/doomgeneric`; its GPL-2.0 license is in `src/doomgeneric/LICENSE`. The
+Yellow Racer adaptation includes its MIT license in
+`LICENSE-Yellow-Racer.txt`. Check the licenses of individual components
+before redistributing them.
